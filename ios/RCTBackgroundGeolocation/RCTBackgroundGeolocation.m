@@ -38,7 +38,7 @@ RCT_EXPORT_MODULE();
     if (self) {
         facade = [[MAURBackgroundGeolocationFacade alloc] init];
         facade.delegate = self;
-        
+
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppPause:) name:UIApplicationDidEnterBackgroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppResume:) name:UIApplicationWillEnterForegroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onFinishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
@@ -59,7 +59,7 @@ RCT_EXPORT_METHOD(configure:(NSDictionary*)configDictionary success:(RCTResponse
     RCTLogInfo(@"RCTBackgroundGeolocation #configure");
     MAURConfig* config = [MAURConfig fromDictionary:configDictionary];
     NSError *error = nil;
-    
+
     if ([facade configure:config error:&error]) {
         success(@[[NSNull null]]);
     } else {
@@ -192,7 +192,7 @@ RCT_EXPORT_METHOD(getCurrentLocation:(NSDictionary*)options success:(RCTResponse
         }
     });
 }
-                   
+
 RCT_EXPORT_METHOD(getStationaryLocation:(RCTResponseSenderBlock)success failure:(RCTResponseSenderBlock)failure)
 {
     RCTLogInfo(@"RCTBackgroundGeolocation #getStationaryLocation");
@@ -310,7 +310,7 @@ RCT_EXPORT_METHOD(forceSync:(RCTResponseSenderBlock)success failure:(RCTResponse
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : NSTemporaryDirectory();
-    
+
     return [basePath stringByAppendingPathComponent:@"SQLiteLogger"];
 }
 
@@ -375,13 +375,13 @@ RCT_EXPORT_METHOD(forceSync:(RCTResponseSenderBlock)success failure:(RCTResponse
  */
 -(void) onFinishLaunching:(NSNotification *)notification
 {
-    if (@available(iOS 10, *)) {
-        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        center.delegate = self;
-    }
+    // if (@available(iOS 10, *)) {
+    //     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    //     center.delegate = self;
+    // }
 
     NSDictionary *dict = [notification userInfo];
-    
+
     if ([dict objectForKey:UIApplicationLaunchOptionsLocationKey]) {
         RCTLogInfo(@"RCTBackgroundGeolocation started by system on location event.");
         MAURConfig *config = [facade getConfig];
@@ -392,12 +392,12 @@ RCT_EXPORT_METHOD(forceSync:(RCTResponseSenderBlock)success failure:(RCTResponse
     }
 }
 
--(void) userNotificationCenter:(UNUserNotificationCenter *)center
-       willPresentNotification:(UNNotification *)notification
-         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
-{
-    completionHandler(UNNotificationPresentationOptionAlert);
-}
+// -(void) userNotificationCenter:(UNUserNotificationCenter *)center
+//        willPresentNotification:(UNNotification *)notification
+//          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
+// {
+//     completionHandler(UNNotificationPresentationOptionAlert);
+// }
 
 -(void) onAppTerminate:(NSNotification *)notification
 {
